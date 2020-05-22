@@ -1,7 +1,7 @@
-version: '2' 
+version: '3' 
 services:
   namenode:
-    image: bde2020/hadoop-namenode:1.1.0-hadoop2.8-java8
+    image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
     container_name: namenode
     volumes:
       - ./data/namenode:/hadoop/dfs/name
@@ -12,7 +12,8 @@ services:
     ports:
       - 50070:50070
   datanode:
-    image: bde2020/hadoop-datanode:1.1.0-hadoop2.8-java8
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode
     depends_on: 
       - namenode
     volumes:
@@ -22,7 +23,7 @@ services:
     ports:
       - 50075:50075
   hive-server:
-    image: bde2020/hive:2.1.0-postgresql-metastore
+    image: bde2020/hive:2.3.2-postgresql-metastore
     container_name: hive-server
     env_file:
       - ./hadoop-hive.env
@@ -31,15 +32,16 @@ services:
     ports:
       - "10000:10000"
   hive-metastore:
-    image: bde2020/hive:2.1.0-postgresql-metastore
+    image: bde2020/hive:2.3.2-postgresql-metastore
     container_name: hive-metastore
     env_file:
       - ./hadoop-hive.env
     command: /opt/hive/bin/hive --service metastore
   hive-metastore-postgresql:
-    image: bde2020/hive-metastore-postgresql:2.1.0
+    image: bde2020/hive-metastore-postgresql:3.1.0
+    container_name: hive-metastore-postgresql
   spark-master:
-    image: bde2020/spark-master:2.1.0-hadoop2.8-hive-java8
+    image: bde2020/spark-master:2.4.5-hadoop2.7
     container_name: spark-master
     ports:
       - 8080:8080
@@ -47,7 +49,7 @@ services:
     env_file:
       - ./hadoop-hive.env
   spark-worker:
-    image: bde2020/spark-worker:2.1.0-hadoop2.8-hive-java8
+    image: bde2020/spark-worker:2.4.5-hadoop2.7
     depends_on:
       - spark-master
     environment:
